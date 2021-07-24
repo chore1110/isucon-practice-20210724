@@ -713,6 +713,8 @@ func PostFriends(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetInitialize(w http.ResponseWriter, r *http.Request) {
+	db.Exec("alter table footprints add index inx_user_id(user_id)")
+	db.Exec("alter table relations add index inx_one_another(one, another)")
 	db.Exec("DELETE FROM relations WHERE id > 500000")
 	db.Exec("DELETE FROM footprints WHERE id > 500000")
 	db.Exec("DELETE FROM entries WHERE id > 500000")
