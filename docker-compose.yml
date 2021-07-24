@@ -23,6 +23,12 @@ services:
       context: .
     environment: 
       "ISUCON5_DB_HOST": "db"
+      "ISUCON5_DB_PORT": "3306"
+      "ISUCON5_DB_USER": "isucon"
+      "ISUCON5_DB_PASSWORD": "isucon"
+      "ISUCON5_DB_NAME": "isuxi"
+    depends_on: 
+      - db
     ports:
       - 8080
     networks: 
