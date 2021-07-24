@@ -39,5 +39,8 @@ clean/log/mysql:
 	-sudo rm /tmp/mysql-slow.log	
 
 run/bench: clean/log/nginx clean/log/mysql nginx/restart mysql/restart
+	make -C go build
+	sudo systemctl stop isuxi.go
+	sudo systemctl start isuxi.go
 	../bench.sh
 
