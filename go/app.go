@@ -385,14 +385,12 @@ LIMIT 10`, user.ID)
 	}
 	rows.Close()
 
-	rows, err = db.Query(`SELECT count(1) FROM relations WHERE one = ?`, user.ID)
+	row = db.QueryRow(`SELECT count(1) FROM relations WHERE one = ?`, user.ID)
+	cnt := new(int)
+	err = row.Scan(cnt)
 	if err != sql.ErrNoRows {
 		checkErr(err)
 	}
-	var friendsTotal int64
-	rows.Next()
-	rows.Scan(&friendsTotal)
-	rows.Close()
 
 	rows, err = db.Query(`SELECT user_id, owner_id, DATE(created_at) AS date, MAX(created_at) AS updated
 FROM footprints
@@ -418,10 +416,10 @@ LIMIT 10`, user.ID)
 		CommentsForMe     []Comment
 		EntriesOfFriends  []Entry
 		CommentsOfFriends []Comment
-		FriendsTotal      int64
+		FriendsTotal      int
 		Footprints        []Footprint
 	}{
-		*user, prof, entries, commentsForMe, entriesOfFriends, commentsOfFriends, friendsTotal, footprints,
+		*user, prof, entries, commentsForMe, entriesOfFriends, commentsOfFriends, *cnt, footprints,
 	})
 }
 
