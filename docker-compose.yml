@@ -1,0 +1,49 @@
+version: "3.8"
+
+services:
+  db:
+    image: mysql:5.7
+    ports:
+      - 0.0.0.0:33060:3306
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_ROOT_PASSWORD: ""
+      MYSQL_DATABASE: isuxi
+      MYSQL_USER: mysql
+      MYSQL_PASSWORD: password
+    volumes:
+      - ./etc/mysql/mysql.conf.d/mysqld.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf
+      - ./baseline/isucon.dump.sql.gz:/docker-entrypoint-initdb.d/isucon.dump.sql.gz
+      - ./baseline/grant.sql:/docker-entrypoint-initdb.d/grant.sql
+    networks: 
+      - isucon
+  app:
+    build:
+      dockerfile: ./Dockerfile.app
+      context: .
+    environment: 
+      "ISUCON5_DB_HOST": "db"
+      "ISUCON5_DB_PORT": "3306"
+      "ISUCON5_DB_USER": "isucon"
+      "ISUCON5_DB_PASSWORD": "isucon"
+      "ISUCON5_DB_NAME": "isuxi"
+    depends_on: 
+      - db
+    ports:
+      - 8080
+    networks: 
+      - isucon
+  proxy:
+    image: nginx:1.10
+    ports:
+      - 80:80
+    volumes: 
+      - ./etc/nginx/nginx.local.conf:/etc/nginx/nginx.conf
+      - ./etc/nginx/sites-available:/etc/nginx/sites-available
+    networks: 
+      - isucon
+    depends_on:
+      - app
+
+networks: 
+  isucon:
