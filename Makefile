@@ -22,3 +22,6 @@ docker/down:
 
 docker/down/whole:
 	docker compose down --rmi all
+
+install/kataribe:
+	test go/bin/kataribe || go get github.com/matsuu/kataribe
