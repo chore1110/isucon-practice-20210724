@@ -6,3 +6,19 @@ nginx/restart:
 
 mysql/restart:
 	sudo systemctl restart mysql
+
+docker/rebuild/app:
+	docker compose rm app -f
+	docker compose up app --build -d
+
+docker/logs:
+	docker compose logs -f
+
+docker/up:
+	docker compose up -d
+
+docker/down:
+	docker compose down
+
+docker/down/whole:
+	docker compose down --rmi all
