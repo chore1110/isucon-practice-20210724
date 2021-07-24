@@ -3,10 +3,6 @@ package main
 import (
 	"database/sql"
 	"errors"
-	"github.com/go-sql-driver/mysql"
-	"github.com/gorilla/context"
-	"github.com/gorilla/mux"
-	"github.com/gorilla/sessions"
 	"html/template"
 	"log"
 	"net/http"
@@ -16,6 +12,11 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/go-sql-driver/mysql"
+	"github.com/gorilla/context"
+	"github.com/gorilla/mux"
+	"github.com/gorilla/sessions"
 )
 
 var (
@@ -384,30 +385,12 @@ LIMIT 10`, user.ID)
 	}
 	rows.Close()
 
-	rows, err = db.Query(`SELECT * FROM relations WHERE one = ? OR another = ? ORDER BY created_at DESC`, user.ID, user.ID)
+	row = db.QueryRow(`SELECT count(1) FROM relations WHERE one = ?`, user.ID)
+	cnt := new(int)
+	err = row.Scan(cnt)
 	if err != sql.ErrNoRows {
 		checkErr(err)
 	}
-	friendsMap := make(map[int]time.Time)
-	for rows.Next() {
-		var id, one, another int
-		var createdAt time.Time
-		checkErr(rows.Scan(&id, &one, &another, &createdAt))
-		var friendID int
-		if one == user.ID {
-			friendID = another
-		} else {
-			friendID = one
-		}
-		if _, ok := friendsMap[friendID]; !ok {
-			friendsMap[friendID] = createdAt
-		}
-	}
-	friends := make([]Friend, 0, len(friendsMap))
-	for key, val := range friendsMap {
-		friends = append(friends, Friend{key, val})
-	}
-	rows.Close()
 
 	rows, err = db.Query(`SELECT user_id, owner_id, DATE(created_at) AS date, MAX(created_at) AS updated
 FROM footprints
@@ -433,10 +416,10 @@ LIMIT 10`, user.ID)
 		CommentsForMe     []Comment
 		EntriesOfFriends  []Entry
 		CommentsOfFriends []Comment
-		Friends           []Friend
+		FriendsTotal      int
 		Footprints        []Footprint
 	}{
-		*user, prof, entries, commentsForMe, entriesOfFriends, commentsOfFriends, friends, footprints,
+		*user, prof, entries, commentsForMe, entriesOfFriends, commentsOfFriends, *cnt, footprints,
 	})
 }
 
