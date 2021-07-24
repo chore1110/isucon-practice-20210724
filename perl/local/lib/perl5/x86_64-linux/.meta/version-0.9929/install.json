@@ -1,0 +1,1 @@
+{"provides":{"version::vpp":{"version":0.9929,"file":"vperl/vpp.pm"},"version::regex":{"file":"lib/version/regex.pm","version":0.9929},"version::vxs":{"version":0.9929,"file":"vutil/lib/version/vxs.pm"},"version":{"file":"lib/version.pm","version":0.9929}},"pathname":"L/LE/LEONT/version-0.9929.tar.gz","dist":"version-0.9929","version":0.9929,"name":"version","target":"version"}
