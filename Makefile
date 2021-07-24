@@ -28,3 +28,16 @@ install/kataribe:
 
 show/kataribe:
 	sudo cat /var/log/nginx/access.log | ./go/bin/kataribe -f ./config/kataribe.toml
+
+show/slowquery:
+	sudo mysqldumpslow /tmp/mysql-slow.log
+	
+clean/log/nginx:
+	-sudo rm /var/log/nginx/access.log
+
+clean/log/mysql:
+	-sudo rm /tmp/mysql-slow.log	
+
+run/bench: clean/log/nginx clean/log/mysql nginx/restart mysql/restart
+	../bench.sh
+
