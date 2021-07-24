@@ -25,3 +25,6 @@ docker/down/whole:
 
 install/kataribe:
 	test go/bin/kataribe || go get github.com/matsuu/kataribe
+
+show/kataribe:
+	sudo cat /var/log/nginx/access.log | ./go/bin/kataribe -f ./config/kataribe.toml
